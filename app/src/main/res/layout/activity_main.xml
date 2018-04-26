@@ -23,4 +23,16 @@
         android:text="Hi"
         />
 
+
+    <Button
+        android:id="@+id/btnScanQRCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Scan QR Code" />
+
+    <TextView
+        android:id="@+id/QRResults"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
