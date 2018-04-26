@@ -1,19 +1,17 @@
 package med.kamili.rachid.practiceapp;
 
 import android.content.Intent;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.squareup.leakcanary.RefWatcher;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,10 +21,9 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements PermissionManager.IPermissionManager{
 
-
-    //QR Code Scanner Object
     private IntentIntegrator qrScan;
     private PermissionManager permissionManager;
+    private RefWatcher refWatcher;
 
     @BindView(R.id.QRResults)
     TextView tvQRResults;
@@ -45,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements PermissionManager
         //Initialize the Scan Object
         qrScan = new IntentIntegrator(this);
 
+        refWatcher = MyApp.getRefWatcher(this);
     }
 
     @OnClick({ R.id.hello, R.id.hi })
@@ -58,12 +56,23 @@ public class MainActivity extends AppCompatActivity implements PermissionManager
         permissionManager.checkPermission();
     }
 
+    @OnClick({ R.id.tvLeak })
+    public void leak(Button button) {
+        new Thread () {
+            @Override
+            public void run() {
+                while (true) {
+                    SystemClock.sleep(1000);
+                }
+            }
+        }.start();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         permissionManager.checkResult(requestCode, permissions, grantResults);
     }
-
 
     //Getting the scan results
     @Override
@@ -80,13 +89,16 @@ public class MainActivity extends AppCompatActivity implements PermissionManager
         }
     }
 
-
     @Override
     public void onPermissionResult(boolean isGranted) {
         if (isGranted) {
             //initiating the qr code scan
             qrScan.initiateScan();
         }
+    }
 
+    @Override public void onDestroy() {
+        super.onDestroy();
+        refWatcher.watch(this);
     }
 }
