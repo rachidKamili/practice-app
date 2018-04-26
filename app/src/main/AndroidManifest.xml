@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="med.kamili.rachid.practiceapp">
 
+    <uses-permission    android:name="android.permission.INTERNET" />
     <uses-permission    android:name="android.permission.CAMERA" />
     <uses-feature       android:name="android.hardware.camera" />
     <uses-feature       android:name="android.hardware.camera.autofocus" />
@@ -22,6 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
     </application>
 
 </manifest>
